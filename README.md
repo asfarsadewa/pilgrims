@@ -21,7 +21,7 @@ them around walls, past hazards and into exits — or watch them walk into the d
 | Menu / pause | `Esc` | Menu button |
 | Mute | `M` | Sound button |
 
-The campaign has **20 handcrafted levels**, all solver-verified. Progress and best move
+The campaign has **30 handcrafted levels**, all solver-verified. Progress and best move
 counts are saved to `localStorage`.
 
 | # | Name | Theme | Size | Par |
@@ -37,6 +37,18 @@ counts are saved to `localStorage`.
 | 018 | The Gathering | ruins | 9×9 | 10 |
 | 019 | The Vigil | snow | 11×11 | 15 |
 | 020 | The Last Mile | night | 11×11 | 15 |
+| 021 | Some Remembered | night | 7×7 | 8 |
+| 022 | Two Roads | road | 9×9 | 9 |
+| 023 | Echo | ruins | 9×9 | 10 |
+| 024 | Divided | river | 11×11 | 15 |
+| 025 | Doubts | night | 11×11 | 15 |
+| 026 | The Long Memory | snow | 11×11 | 15 |
+| 027 | Still They Follow | river | 11×11 | 15 |
+| 028 | The Old Way | mountain | 11×11 | 17 |
+| 029 | The Trail | ruins | 11×11 | 17 |
+| 030 | A Place That No Longer Exists | night | 11×11 | 31 |
+
+Levels 021–030 are the **Memory** chapter, built around the Doubter.
 
 `npm run solve` prints the true minimum for every level and asserts that replaying it
 solves the level, so `par` can never drift from reality.
@@ -57,6 +69,26 @@ Only the pitch changes between views, so the grid orientation stays consistent.
 ---
 
 ## Core rules
+
+### The Doubter
+
+Most pilgrims follow the Shrine. A **Doubter** (`?`) follows where the Shrine *was* —
+specifically the tile it occupied at the start of the turn. So while a normal pilgrim
+walks toward where the Shrine is now, a Doubter retraces the Shrine's path one step
+behind it.
+
+That turns the puzzle temporal: you are no longer choosing *where the Shrine is*, you are
+choosing *which tile it leaves behind*, because that is what the Doubters will chase. A
+Doubter is led by walking the Shrine along the route you want it to take and then stepping
+off the exit so the Doubter follows you onto it.
+
+Two wordless cues keep this readable:
+
+- a persistent **memory marker** (a cool ring and light) on the tile the Shrine just left,
+  so you never have to remember invisible state; and
+- Doubters themselves are pale and cool-toned, with a small hovering mote.
+
+The memory marker only appears on levels that contain Doubters.
 
 1. Each input resolves exactly one turn.
 2. The Shrine moves one orthogonal tile (never into walls, void, hazards or pilgrims).
@@ -247,7 +279,7 @@ npm run deploy     # build + deploy to Cloudflare Workers
 }
 ```
 
-Legend: `#` wall · `.` floor · `~` void · `E` exit · `X` hazard · `P` pilgrim · `S` shrine.
+Legend: `#` wall · `.` floor · `~` void · `E` exit · `X` hazard · `P` pilgrim · `?` doubter · `S` shrine.
 
 Themes: `road`, `river`, `mountain`, `snow`, `ruins`, `night`.
 

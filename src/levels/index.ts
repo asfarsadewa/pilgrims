@@ -20,6 +20,16 @@ import l017 from "./017.json";
 import l018 from "./018.json";
 import l019 from "./019.json";
 import l020 from "./020.json";
+import l021 from "./021.json";
+import l022 from "./022.json";
+import l023 from "./023.json";
+import l024 from "./024.json";
+import l025 from "./025.json";
+import l026 from "./026.json";
+import l027 from "./027.json";
+import l028 from "./028.json";
+import l029 from "./029.json";
+import l030 from "./030.json";
 
 /**
  * The campaign. Levels are handcrafted JSON; order in this array is the
@@ -28,6 +38,7 @@ import l020 from "./020.json";
 export const LEVELS: LevelDefinition[] = [
   l001, l002, l003, l004, l005, l006, l007, l008, l009, l010,
   l011, l012, l013, l014, l015, l016, l017, l018, l019, l020,
+  l021, l022, l023, l024, l025, l026, l027, l028, l029, l030,
 ] as LevelDefinition[];
 
 export const LEVEL_COUNT = LEVELS.length;

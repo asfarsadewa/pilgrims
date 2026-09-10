@@ -12,6 +12,7 @@ import { CameraController } from "./CameraController";
 import { DecorRenderer } from "./DecorRenderer";
 import { EntityRenderer } from "./EntityRenderer";
 import { Effects } from "./Effects";
+import { MemoryMarker } from "./MemoryMarker";
 import { Particles } from "./Particles";
 import { SceneBuilder } from "./SceneBuilder";
 import { getTheme, Theme } from "./themes";
@@ -33,6 +34,8 @@ export class Renderer {
   private decorRenderer: DecorRenderer;
   private effects: Effects;
   private particles: Particles;
+  private memoryMarker: MemoryMarker;
+  private hasDoubters = false;
   private animationManager: AnimationManager;
   private composer: EffectComposer | null = null;
   private bloom: UnrealBloomPass | null = null;
@@ -65,6 +68,7 @@ export class Renderer {
     this.decorRenderer = new DecorRenderer(this.assets);
     this.effects = new Effects({ width: 1, height: 1 });
     this.particles = new Particles();
+    this.memoryMarker = new MemoryMarker();
     this.titleScene = new TitleScene(this.assets);
 
     const scene = this.sceneBuilder.scene;
@@ -73,6 +77,7 @@ export class Renderer {
     scene.add(this.entityRenderer.group);
     scene.add(this.effects.group);
     scene.add(this.particles.points);
+    scene.add(this.memoryMarker.group);
     scene.add(this.titleScene.group);
 
     this.animationManager = new AnimationManager(
@@ -134,6 +139,8 @@ export class Renderer {
     const theme = getTheme(state.theme);
     this.theme = theme;
 
+    this.hasDoubters = state.pilgrims.some((p) => p.type === "doubter");
+
     if (this.prefersReducedMotion) this.animationManager.reducedMotion = true;
 
     this.boardRenderer.build(state, theme);
@@ -161,6 +168,13 @@ export class Renderer {
       this.bloom.radius = 0.7;
       this.bloom.threshold = theme.name === "night" ? 0.7 : 0.82;
     }
+
+    // Show the Shrine's memory only where doubters exist.
+    this.memoryMarker.setEnabled(this.hasDoubters);
+    if (this.hasDoubters) {
+      const world = this.entityRenderer.positionOf(state.shrine.position);
+      this.memoryMarker.setWorld(world.x, world.z);
+    }
   }
 
   /** Switch to the opening-screen monument. */
@@ -168,6 +182,7 @@ export class Renderer {
     this.mode = "title";
     this.animationManager.reset();
     this.effects.clear();
+    this.memoryMarker.setEnabled(false);
     this.setGameVisible(false);
     this.titleScene.setVisible(true);
 
@@ -205,6 +220,11 @@ export class Renderer {
   }
 
   animateTurn(previous: GameState, next: GameState): Promise<void> {
+    // The tile the Shrine leaves is what doubters will follow this turn.
+    if (this.hasDoubters) {
+      const world = this.entityRenderer.positionOf(previous.shrine.position);
+      this.memoryMarker.setWorld(world.x, world.z);
+    }
     return this.animationManager.animateTurn(previous, next);
   }
 
@@ -232,6 +252,7 @@ export class Renderer {
       this.boardRenderer.update(time * 1000);
       if (this.mode === "title") this.titleScene.update(time * 1000);
       this.effects.update(dt);
+      this.memoryMarker.update(time);
       if (this.particles.points.visible) this.particles.update(dt, time);
       if (!this.prefersReducedMotion) this.cameraController.update(time);
 
@@ -260,6 +281,7 @@ export class Renderer {
     this.entityRenderer.dispose();
     this.effects.clear();
     this.particles.dispose();
+    this.memoryMarker.dispose();
     this.titleScene.dispose();
     this.composer?.dispose();
     this.gl.dispose();

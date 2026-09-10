@@ -21,6 +21,16 @@ const INTRO_LINES: Record<string, string> = {
   "008": "The wrong way looked like the only way.",
   "009": "The road disappeared. Still, they followed.",
   "010": "Some remembered differently.",
+  "021": "Some remembered differently.",
+  "022": "Two roads, one memory.",
+  "023": "They followed an echo.",
+  "024": "The river divided them.",
+  "025": "Doubt is a slow current.",
+  "026": "Memory is a long road.",
+  "027": "Still, they followed.",
+  "028": "The old way is not always the way.",
+  "029": "The trail only goes forward.",
+  "030": "Some followed a place that no longer existed.",
 };
 
 const save = new SaveManager();

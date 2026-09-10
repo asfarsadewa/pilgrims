@@ -27,6 +27,8 @@ interface PilgrimInternal extends PilgrimView {
   phase: number;
   facingTarget: number;
   facingCurrent: number;
+  /** Floating mote that marks a doubter. */
+  mark: THREE.Object3D | null;
 }
 
 export interface ShrineView {
@@ -68,6 +70,7 @@ export class EntityRenderer {
   private shrineView: ShrineInternal | null = null;
   private layout: WorldLayout = { width: 1, height: 1 };
   private disposables: THREE.Material[] = [];
+  private geometries: THREE.BufferGeometry[] = [];
   private lastTime = 0;
 
   constructor(private assets: AssetLoader) {
@@ -114,9 +117,11 @@ export class EntityRenderer {
   private createPilgrim(pilgrim: PilgrimState): void {
     const root = new THREE.Group();
     const model = this.assets.instance("pilgrim");
-    const tint = new THREE.Color(
-      PILGRIM_TINTS[pilgrim.colorIndex % PILGRIM_TINTS.length],
-    );
+    const isDoubter = pilgrim.type === "doubter";
+    // Doubters read cool and pale; the faithful keep the warm earth palette.
+    const tint = isDoubter
+      ? new THREE.Color(0xbcc6ee)
+      : new THREE.Color(PILGRIM_TINTS[pilgrim.colorIndex % PILGRIM_TINTS.length]);
 
     if (model) {
       const seen = new Map<THREE.Material, THREE.Material>();
@@ -127,12 +132,35 @@ export class EntityRenderer {
         this.cloneMaterial(mesh, seen, (material) => {
           material.color.multiply(tint);
           material.metalness = 0;
-          material.roughness = 0.88;
+          material.roughness = isDoubter ? 0.7 : 0.88;
+          if (isDoubter) {
+            material.emissiveMap = material.map ?? null;
+            material.emissive = new THREE.Color(0x2b3760);
+            material.emissiveIntensity = 0.4;
+          }
         });
       });
       root.add(model);
     } else {
       root.add(placeholderFigure(tint.getHex()));
+    }
+
+    // A small hovering mote so doubters are unmistakable at a glance.
+    let mark: THREE.Object3D | null = null;
+    if (isDoubter) {
+      const markGeometry = new THREE.SphereGeometry(0.038, 10, 8);
+      const markMaterial = new THREE.MeshStandardMaterial({
+        color: 0xd6e2ff,
+        emissive: 0x9db4ff,
+        emissiveIntensity: 2.4,
+        roughness: 0.35,
+      });
+      this.disposables.push(markMaterial);
+      this.geometries.push(markGeometry);
+      const mesh = new THREE.Mesh(markGeometry, markMaterial);
+      mesh.position.set(0, 1.0, 0);
+      root.add(mesh);
+      mark = mesh;
     }
 
     const clips = this.assets.animations("pilgrim");
@@ -169,6 +197,7 @@ export class EntityRenderer {
       phase: (pilgrim.colorIndex * 1.7) % (Math.PI * 2),
       facingTarget: 0,
       facingCurrent: 0,
+      mark,
     };
     this.pilgrims.set(pilgrim.id, view);
     this.group.add(root);
@@ -333,6 +362,12 @@ export class EntityRenderer {
       view.walkAction?.setEffectiveWeight(view.walkWeight);
       view.idleAction?.setEffectiveWeight(1 - view.walkWeight);
       view.mixer?.update(dt);
+
+      if (view.mark) {
+        view.mark.position.y =
+          1.0 + Math.sin(t * 2.1 + view.phase) * 0.045;
+        view.mark.rotation.y = t * 1.4;
+      }
     }
   }
 
@@ -342,6 +377,8 @@ export class EntityRenderer {
     }
     for (const material of this.disposables) material.dispose();
     this.disposables = [];
+    for (const geometry of this.geometries) geometry.dispose();
+    this.geometries = [];
     this.pilgrims.clear();
     this.shrineView = null;
     this.group.clear();

@@ -1,6 +1,6 @@
 import { cloneState } from "./clone";
 import { isSolved, resolveTurn } from "./TurnResolver";
-import { Direction, GameState } from "./types";
+import { Direction, GameState, GridPosition } from "./types";
 
 const ACTIONS: Direction[] = [
   Direction.Up,
@@ -16,8 +16,21 @@ export interface Solution {
 }
 
 /**
- * Stable, order-independent signature of a state. Doubles as the BFS visited
- * key and as a determinism fingerprint for tests.
+ * Where the Shrine was at the start of the current turn. Doubters resolve their
+ * intent *after* the Shrine has moved, so `shrineHistory[length - 2]` is always
+ * the pre-move Shrine position — i.e. exactly the state's own `shrine.position`.
+ * That is why the solver does not need Shrine history in its key.
+ */
+export function previousShrinePosition(state: GameState): GridPosition {
+  const history = state.shrineHistory;
+  return history.length >= 2
+    ? history[history.length - 2]
+    : state.shrine.position;
+}
+
+/**
+ * Stable, order-independent signature of a state. The future depends only on
+ * the Shrine position and the pilgrims (see `previousShrinePosition`).
  */
 export function stateKey(state: GameState): string {
   const pilgrims = state.pilgrims

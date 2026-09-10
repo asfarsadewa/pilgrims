@@ -28,6 +28,10 @@ export function loadLevel(definition: LevelDefinition): GameState {
       if (char === "P") {
         tile = TileType.Floor;
         pilgrims.push(makePilgrim(`p${pilgrims.length + 1}`, "normal", { x, y }, colorIndex++));
+      } else if (char === "?") {
+        // A doubter follows where the Shrine was, not where it is.
+        tile = TileType.Floor;
+        pilgrims.push(makePilgrim(`p${pilgrims.length + 1}`, "doubter", { x, y }, colorIndex++));
       } else if (char === "S") {
         tile = TileType.Floor;
         if (shrine) throw new Error(`Level ${definition.id}: multiple shrines`);

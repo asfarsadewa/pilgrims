@@ -410,7 +410,7 @@ async function main() {
 
   // Verify every level is framed on screen and render a screenshot of the last.
   const framing = [];
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 30; i++) {
     await evaluate(`window.pilgrims.startLevel(${i})`);
     await delay(320);
     const frame = await evaluate(`(() => {
@@ -437,6 +437,48 @@ async function main() {
     })()`);
     framing.push(frame);
   }
+  // Doubter chapter: check a doubter level loads, shows the memory marker, and
+  // that the marker tracks the tile the Shrine leaves.
+  await evaluate(`window.pilgrims.startLevel(20)`);
+  await delay(500);
+  const doubterBefore = await evaluate(`(() => {
+    const hook = window.pilgrims;
+    const g = hook.game();
+    const mm = hook.renderer.memoryMarker;
+    return {
+      level: g.state.levelId,
+      doubters: g.state.pilgrims.filter((p) => p.type === 'doubter').length,
+      markerVisible: mm.group.visible,
+      markerX: +mm.group.position.x.toFixed(2),
+      markerZ: +mm.group.position.z.toFixed(2),
+    };
+  })()`);
+  await evaluate(
+    `window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }))`,
+  );
+  await delay(700);
+  await evaluate(
+    `window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }))`,
+  );
+  await delay(700);
+  const doubterAfter = await evaluate(`(() => {
+    const hook = window.pilgrims;
+    const g = hook.game();
+    const mm = hook.renderer.memoryMarker;
+    return {
+      turn: g.state.turn,
+      markerX: +mm.group.position.x.toFixed(2),
+      markerZ: +mm.group.position.z.toFixed(2),
+    };
+  })()`);
+  const doubterChapter = {
+    before: doubterBefore,
+    after: doubterAfter,
+    markerMoved:
+      doubterBefore.markerX !== doubterAfter.markerX ||
+      doubterBefore.markerZ !== doubterAfter.markerZ,
+  };
+
   const finalShot = await cdp.send("Page.captureScreenshot", { format: "png" });
   writeFileSync(".smoke/final-level.png", Buffer.from(finalShot.data, "base64"));
 
@@ -464,6 +506,7 @@ async function main() {
         outcome,
         navigation,
         failureNav,
+        doubterChapter,
         framing,
         errors,
       },
