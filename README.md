@@ -134,7 +134,13 @@ interpolates from the previous snapshot to the next one.
 
 ## Opening screen
 
-Launching the game shows a sparse, meditative title: **three travellers** crossing the
+Launching the game opens on a **tactile stone gateway**: an opaque slab with a carved
+circular aperture, through which a single pilgrim is seen in profile, standing alone and
+facing a faint light on the horizon. Its only job, besides mood, is to capture one real
+user gesture — which is what lets the browser start audio — so the button physically
+depresses, the gate opens, and the title screen (and music) begin.
+
+Past the gate, the title proper is sparse and meditative: **three travellers** cross the
 dark toward a distant AI-authored **wayside monument**, one of them carrying a small
 flickering lantern. The camera drifts on a very slow orbit through the fog, and the UI is
 deliberately minimal — a wordmark, a hairline rule, one sentence and a single way forward —

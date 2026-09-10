@@ -266,13 +266,18 @@ export class UI {
       this.overlay.removeEventListener("pointerdown", onPointer);
       button?.removeEventListener("click", onClick);
       handlers.onUnlock();
-      gate?.classList.add("leaving");
-      this.overlay.classList.add("leaving");
+      // A short tactile beat: the button physically depresses, then the gate opens.
+      button?.classList.add("pressed");
+      gate?.classList.add("pressed");
+      window.setTimeout(() => {
+        gate?.classList.add("leaving");
+        this.overlay.classList.add("leaving");
+      }, 170);
       window.setTimeout(() => {
         this.overlay.classList.remove("gate-mode", "leaving");
         document.body.classList.remove("gate-mode");
         handlers.onReveal();
-      }, 720);
+      }, 170 + 780);
     };
 
     const onPointer = () => activate();

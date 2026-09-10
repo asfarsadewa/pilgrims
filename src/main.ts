@@ -313,7 +313,7 @@ async function bootstrap(): Promise<void> {
   // Prepare the resume level, then hold the player at the entry ritual. The
   // gate's single gesture is what lets the browser start audio.
   startLevel(resumeIndex(), { announce: false });
-  renderer.showTitle();
+  renderer.showGate();
   audio.playMusic(musicRequest("title"));
   ui.showGate({
     onUnlock: () => audio.unlock(),

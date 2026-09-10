@@ -167,8 +167,12 @@ async function main() {
       action: (node?.querySelector('.gate-begin')?.textContent ?? '').trim() || null,
       hint: (node?.querySelector('.gate-hint')?.textContent ?? '').trim() || null,
       focus: (document.activeElement?.textContent ?? '').trim() || null,
+      gateSceneVisible: !!(window.pilgrims.renderer.gateScene?.visible),
+      titleSceneVisible: !!(window.pilgrims.renderer.titleScene?.visible),
     };
   })()`);
+  const gateShot = await cdp.send("Page.captureScreenshot", { format: "png" });
+  writeFileSync(".smoke/gate.png", Buffer.from(gateShot.data, "base64"));
   await evaluate(
     `document.querySelector('.overlay')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))`,
   );

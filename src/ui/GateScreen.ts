@@ -1,7 +1,7 @@
 export interface GateHandlers {
   /** Runs synchronously inside the user gesture (audio unlock must happen here). */
   onUnlock: () => void;
-  /** Runs after the gate has faded out (reveal the title screen). */
+  /** Runs after the gate has opened (reveal the title screen). */
   onReveal: () => void;
 }
 
@@ -29,7 +29,7 @@ function blockGlyph(): SVGSVGElement {
       "points",
       `${cx},${cy - 13} ${cx + 15},${cy - 5} ${cx},${cy + 3} ${cx - 15},${cy - 5}`,
     );
-    top.setAttribute("fill", glow ? "#ffe6a8" : "#474d5c");
+    top.setAttribute("fill", glow ? "#ffe6a8" : "#4a5164");
     const left = document.createElementNS(NS, "polygon");
     left.setAttribute(
       "points",
@@ -55,11 +55,16 @@ function blockGlyph(): SVGSVGElement {
 }
 
 /**
- * The pre-title ritual. Its only job (beyond atmosphere) is to capture one real
- * user gesture so the browser lets us start audio.
+ * The pre-title gateway. A solid, tactile slab whose only job (beyond
+ * atmosphere) is to capture one real user gesture so the browser lets us start
+ * audio, and to make that moment feel deliberate.
  */
 export function renderGateScreen(): HTMLElement {
   const screen = element("div", "gate-screen");
+
+  const emblem = element("div", "gate-emblem");
+  emblem.append(blockGlyph());
+  emblem.append(element("div", "gate-emblem-ring"));
 
   const line = element("p", "gate-line");
   line.textContent = "They walk toward what they believe will save them.";
@@ -69,10 +74,24 @@ export function renderGateScreen(): HTMLElement {
   const button = element("button", "gate-begin");
   button.type = "button";
   button.textContent = "Begin your pilgrimage";
+  button.append(element("span", "gate-bloom"));
 
   const hint = element("p", "gate-hint");
   hint.textContent = "click · tap · press any key";
 
-  screen.append(blockGlyph(), line, rule, button, hint);
+  const sound = element("div", "gate-sound");
+  const bars = element("span", "gate-bars");
+  for (let i = 0; i < 3; i++) bars.append(element("span", "gate-bar"));
+  const soundLabel = element("span", "gate-sound-label");
+  soundLabel.textContent = "sound begins here";
+  sound.append(bars, soundLabel);
+
+  const top = element("div", "gate-top");
+  top.append(emblem);
+
+  const bottom = element("div", "gate-bottom");
+  bottom.append(line, rule, button, hint, sound);
+
+  screen.append(top, bottom);
   return screen;
 }

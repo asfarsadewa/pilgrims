@@ -12,6 +12,7 @@ import { CameraController } from "./CameraController";
 import { DecorRenderer } from "./DecorRenderer";
 import { EntityRenderer } from "./EntityRenderer";
 import { Effects } from "./Effects";
+import { GateScene } from "./GateScene";
 import { MemoryMarker } from "./MemoryMarker";
 import { Particles } from "./Particles";
 import { SceneBuilder } from "./SceneBuilder";
@@ -46,7 +47,8 @@ export class Renderer {
   private running = false;
   private theme: Theme = getTheme("road");
   private readonly titleScene: TitleScene;
-  private mode: "title" | "game" = "title";
+  private readonly gateScene: GateScene;
+  private mode: "title" | "gate" | "game" = "gate";
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -70,6 +72,7 @@ export class Renderer {
     this.particles = new Particles();
     this.memoryMarker = new MemoryMarker();
     this.titleScene = new TitleScene(this.assets);
+    this.gateScene = new GateScene(this.assets);
 
     const scene = this.sceneBuilder.scene;
     scene.add(this.boardRenderer.group);
@@ -79,6 +82,7 @@ export class Renderer {
     scene.add(this.particles.points);
     scene.add(this.memoryMarker.group);
     scene.add(this.titleScene.group);
+    scene.add(this.gateScene.group);
 
     this.animationManager = new AnimationManager(
       this.entityRenderer,
@@ -96,6 +100,7 @@ export class Renderer {
   async preload(): Promise<void> {
     await this.assets.loadAll();
     this.titleScene.build();
+    this.gateScene.build();
   }
 
   /** Apply a camera view preset (diorama / classic / elevated). */
@@ -133,6 +138,7 @@ export class Renderer {
   loadLevel(state: GameState): void {
     this.mode = "game";
     this.titleScene.setVisible(false);
+    this.gateScene.setVisible(false);
     this.setGameVisible(true);
     this.animationManager.reset();
     this.effects.clear();
@@ -177,6 +183,38 @@ export class Renderer {
     }
   }
 
+  /** The entry gateway: one pilgrim in the dark, facing a far light. */
+  showGate(): void {
+    this.mode = "gate";
+    this.animationManager.reset();
+    this.effects.clear();
+    this.memoryMarker.setEnabled(false);
+    this.setGameVisible(false);
+    this.titleScene.setVisible(false);
+    this.gateScene.setVisible(true);
+
+    const theme = getTheme("night");
+    this.theme = theme;
+    this.gateScene.setTheme(theme);
+    this.cameraController.focus(2.1, this.aspect(), 0.24);
+    this.sceneBuilder.applyTheme(
+      theme,
+      5,
+      5,
+      this.cameraController.cameraDistance,
+      this.cameraController.boardExtent,
+    );
+    this.cameraController.setOrbit(0);
+    this.particles.setTheme(theme.shrineGlow, 4);
+    this.particles.points.visible = !this.prefersReducedMotion;
+
+    if (this.bloom) {
+      this.bloom.strength = 0.85;
+      this.bloom.radius = 0.7;
+      this.bloom.threshold = 0.72;
+    }
+  }
+
   /** Switch to the opening-screen monument. */
   showTitle(): void {
     this.mode = "title";
@@ -184,6 +222,7 @@ export class Renderer {
     this.effects.clear();
     this.memoryMarker.setEnabled(false);
     this.setGameVisible(false);
+    this.gateScene.setVisible(false);
     this.titleScene.setVisible(true);
 
     const theme = getTheme("night");
@@ -251,6 +290,7 @@ export class Renderer {
       this.entityRenderer.update(time * 1000);
       this.boardRenderer.update(time * 1000);
       if (this.mode === "title") this.titleScene.update(time * 1000);
+      else if (this.mode === "gate") this.gateScene.update(time * 1000);
       this.effects.update(dt);
       this.memoryMarker.update(time);
       if (this.particles.points.visible) this.particles.update(dt, time);
@@ -283,6 +323,7 @@ export class Renderer {
     this.particles.dispose();
     this.memoryMarker.dispose();
     this.titleScene.dispose();
+    this.gateScene.dispose();
     this.composer?.dispose();
     this.gl.dispose();
     this.gl.domElement.remove();
