@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d1014" />
+    <meta name="color-scheme" content="dark" />
+    <title>Pilgrims — you control what they follow</title>
+
+    <meta
+      name="description"
+      content="A tiny deterministic puzzle game. You don't control the pilgrims — you control the Shrine they follow. Guide them through walls, hazards and gates to safety."
+    />
+    <link rel="canonical" href="https://pilgrims.asfarlab.fun/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Pilgrims" />
+    <meta property="og:title" content="Pilgrims" />
+    <meta
+      property="og:description"
+      content="You don't control the pilgrims. You control what they follow. A tiny deterministic puzzle game."
+    />
+    <meta property="og:url" content="https://pilgrims.asfarlab.fun/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://pilgrims.asfarlab.fun/og-card.png" />
+    <meta property="og:image:secure_url" content="https://pilgrims.asfarlab.fun/og-card.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="A lone hooded pilgrim walks toward a distant glowing shrine across a misty plain, with the wordmark PILGRIMS."
+    />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pilgrims" />
+    <meta
+      name="twitter:description"
+      content="You don't control the pilgrims. You control what they follow."
+    />
+    <meta name="twitter:image" content="https://pilgrims.asfarlab.fun/og-card.png" />
+    <meta
+      name="twitter:image:alt"
+      content="A lone pilgrim walking toward a distant glowing shrine in the mist."
+    />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Pilgrims" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="application-name" content="Pilgrims" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Pilgrims",
+        "description": "A tiny deterministic puzzle game where you move a Shrine instead of controlling the people who follow it.",
+        "url": "https://pilgrims.asfarlab.fun/",
+        "image": "https://pilgrims.asfarlab.fun/og-card.png",
+        "genre": "Puzzle",
+        "applicationCategory": "Game",
+        "gamePlatform": "Web browser",
+        "operatingSystem": "Any",
+        "playMode": "SinglePlayer",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <div id="scene" aria-label="Game board"></div>
+
+      <header id="hud">
+        <div class="hud-group">
+          <span id="level-number" class="hud-number">01</span>
+          <span id="level-name" class="hud-name">Follow</span>
+        </div>
+        <div class="hud-group hud-moves">
+          <span class="hud-label">MOVES</span>
+          <span id="move-count" class="hud-number">0</span>
+          <span id="par-count" class="hud-par"></span>
+        </div>
+      </header>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+      <div id="loading" class="loading">
+        <div class="loading-mark"></div>
+        <p class="loading-text">Lighting the shrine…</p>
+      </div>
+
+      <div id="touch-controls" aria-label="Directional controls">
+        <button class="dpad dpad-up" data-move="Up" aria-label="Move shrine up">▲</button>
+        <button class="dpad dpad-left" data-move="Left" aria-label="Move shrine left">◀</button>
+        <button class="dpad dpad-wait" data-move="Wait" aria-label="Wait">•</button>
+        <button class="dpad dpad-right" data-move="Right" aria-label="Move shrine right">▶</button>
+        <button class="dpad dpad-down" data-move="Down" aria-label="Move shrine down">▼</button>
+      </div>
+
+      <footer id="controls">
+        <button id="undo-button" data-action="undo">Undo</button>
+        <button data-action="restart">Restart</button>
+        <button id="mute-button" data-action="mute" class="active">Sound</button>
+        <button data-action="menu">Menu</button>
+      </footer>
+
+      <div id="overlay" class="overlay hidden">
+        <div id="overlay-panel" class="panel"></div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

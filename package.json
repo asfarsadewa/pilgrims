@@ -1,0 +1,35 @@
+{
+  "name": "pilgrims",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "You don't control the pilgrims. You control what they follow.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "solve": "tsx tools/solve.ts",
+    "smoke": "node tools/smoke.mjs",
+    "music": "node tools/generate_music.mjs",
+    "models": "blender --background --factory-startup --python tools/blender/build_models.py",
+    "og": "python tools/make_og_card.py",
+    "deploy": "npm run build && wrangler deploy",
+    "deploy:preview": "npm run build && wrangler versions upload"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "@types/pngjs": "^6.0.5",
+    "@types/three": "^0.180.0",
+    "pngjs": "^7.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8",
+    "wrangler": "^4.130.0"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  }
+}
