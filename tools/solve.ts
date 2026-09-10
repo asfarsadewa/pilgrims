@@ -48,8 +48,9 @@ for (const definition of levels) {
   );
   console.log(`    ${solution.path.join(" → ")}`);
   if (definition.par !== undefined && solution.moves !== definition.par) {
-    console.log(
-      `    ⚠ authored par ${definition.par} differs from minimum ${solution.moves}`,
+    allGood = false;
+    console.error(
+      `    ✘ authored par ${definition.par} does not match the minimum ${solution.moves}`,
     );
   }
 }

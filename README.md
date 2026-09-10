@@ -50,8 +50,9 @@ counts are saved to `localStorage`.
 
 Levels 021–030 are the **Memory** chapter, built around the Doubter.
 
-`npm run solve` prints the true minimum for every level and asserts that replaying it
-solves the level, so `par` can never drift from reality.
+`npm run solve` prints the true minimum for every level, asserts that replaying it solves
+the level, and **fails with a non-zero exit** if an authored `par` differs from that
+minimum — so a stale `par` cannot slip through CI.
 
 ### Camera views
 
@@ -123,7 +124,7 @@ src/
 ├── input/         keyboard, swipe, d-pad
 ├── audio/         procedural Web Audio (no assets)
 ├── ui/            HUD, overlays, level select, save data
-└── levels/        handcrafted JSON levels 001–010
+└── levels/        handcrafted JSON levels 001–030
 ```
 
 Animations never drive the simulation: a turn is resolved instantly, then the renderer

@@ -29,8 +29,35 @@ export function previousShrinePosition(state: GameState): GridPosition {
 }
 
 /**
- * Stable, order-independent signature of a state. The future depends only on
- * the Shrine position and the pilgrims (see `previousShrinePosition`).
+ * Stable, order-independent signature of a state: the BFS visited key and the
+ * determinism fingerprint.
+ *
+ * =========================================================================
+ *  ⚠  THE KEY MUST CONTAIN EVERYTHING THE NEXT TURN CAN DEPEND ON.  ⚠
+ * =========================================================================
+ *
+ * It is intentionally minimal today, and that is *only* correct because:
+ *   - intent is resolved AFTER the Shrine moves, so a Doubter's target
+ *     (`shrineHistory[length - 2]`) is always this state's own
+ *     `shrine.position` — no history needs to be stored; and
+ *   - every current mechanic is otherwise stateless across a turn (the board
+ *     never changes mid-level).
+ * See `tests/doubter.test.ts` -> "does not depend on Shrine history beyond the
+ * current position" for the test that pins this assumption.
+ *
+ * BEFORE ADDING ANY STATEFUL MECHANIC, EXTEND THIS KEY WITH ITS STATE, or BFS
+ * will silently merge states that merely look equivalent. The symptom is nasty:
+ * a level reported as impossible (or a bogus minimum) rather than a crash.
+ *
+ * Mechanics that REQUIRE extending the key, and what to add:
+ *   - collapsing bridges / burning ground ....... the changing board tiles
+ *   - persistent doors, plates, one-way gates ... mechanism/board state
+ *   - Elder "moves every second turn" .......... turn parity (`state.turn % 2`)
+ *   - a pilgrim targeting Shrine[-3] ............ the relevant `shrineHistory`
+ *   - anything with a "has been used" latch ...... that flag
+ *
+ * Rule of thumb: if two states with the same key can produce different results
+ * from `resolveTurn(state, dir)`, the key is wrong.
  */
 export function stateKey(state: GameState): string {
   const pilgrims = state.pilgrims
