@@ -410,7 +410,7 @@ async function main() {
 
   // Verify every level is framed on screen and render a screenshot of the last.
   const framing = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 20; i++) {
     await evaluate(`window.pilgrims.startLevel(${i})`);
     await delay(320);
     const frame = await evaluate(`(() => {

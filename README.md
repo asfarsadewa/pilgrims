@@ -21,8 +21,25 @@ them around walls, past hazards and into exits — or watch them walk into the d
 | Menu / pause | `Esc` | Menu button |
 | Mute | `M` | Sound button |
 
-The prototype campaign has **10 handcrafted levels**. Progress and best move counts are
-saved to `localStorage`.
+The campaign has **20 handcrafted levels**, all solver-verified. Progress and best move
+counts are saved to `localStorage`.
+
+| # | Name | Theme | Size | Par |
+| --- | --- | --- | --- | --- |
+| 001–010 | The Road | road/river/mountain/ruins/night | 7×7 – 11×11 | 3–15 |
+| 011 | The Crossing | river | 11×11 | 12 |
+| 012 | The Ford | river | 11×11 | 13 |
+| 013 | Switchback | mountain | 11×11 | 31 |
+| 014 | The Weir | river | 11×11 | 17 |
+| 015 | Crossings | road | 9×9 | 14 |
+| 016 | The Long Road | road | 15×15 | 22 |
+| 017 | The Gate | mountain | 11×11 | 17 |
+| 018 | The Gathering | ruins | 9×9 | 10 |
+| 019 | The Vigil | snow | 11×11 | 15 |
+| 020 | The Last Mile | night | 11×11 | 15 |
+
+`npm run solve` prints the true minimum for every level and asserts that replaying it
+solves the level, so `par` can never drift from reality.
 
 ### Camera views
 
