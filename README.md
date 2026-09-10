@@ -24,6 +24,19 @@ them around walls, past hazards and into exits — or watch them walk into the d
 The prototype campaign has **10 handcrafted levels**. Progress and best move counts are
 saved to `localStorage`.
 
+### Camera views
+
+The board can be viewed from three angles, selectable on the opening screen or in the
+pause menu, and remembered between sessions:
+
+| View | Pitch | Feel |
+| --- | --- | --- |
+| **Diorama** (default) | ~35° | low tabletop miniature |
+| Classic | ~48° | the original raised angle |
+| Elevated | ~58° | higher, clearest read of the whole board |
+
+Only the pitch changes between views, so the grid orientation stays consistent.
+
 ---
 
 ## Core rules
