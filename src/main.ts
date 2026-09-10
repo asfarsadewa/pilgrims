@@ -56,9 +56,10 @@ let currentIndex = 0;
 const input = new InputManager(sceneContainer);
 input.on(handleInput);
 
-// Browsers require a gesture before audio may start; a pointer press on the
-// title screen counts, so unlock on the first click/tap anywhere.
+// Browsers require a gesture before audio may start. Any click/tap or keypress
+// counts, so unlock on the first one anywhere on the page.
 window.addEventListener("pointerdown", () => audio.unlock(), { passive: true });
+window.addEventListener("keydown", () => audio.unlock());
 
 const ui = new UI(
   {
