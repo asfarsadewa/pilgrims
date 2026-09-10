@@ -9,6 +9,7 @@ import {
 } from "./LevelComplete";
 import { renderLevelSelect } from "./LevelSelect";
 import { SaveData } from "./SaveManager";
+import { GateHandlers, renderGateScreen } from "./GateScreen";
 import { renderTitleScreen, TitleOptions } from "./TitleScreen";
 
 export interface UIHandlers extends PanelHandlers {
@@ -236,12 +237,74 @@ export class UI {
     this.panelHost.replaceChildren(renderTitleScreen(options));
     this.overlay.classList.remove("hidden");
     this.onVisibilityChange?.(true);
+    this.fadeInOverlay();
     window.requestAnimationFrame(() => this.focusFirst());
+  }
+
+  /**
+   * The pre-title ritual. Captures one real user gesture, which the browser
+   * requires before any audio may start, then fades into the title screen.
+   */
+  showGate(handlers: GateHandlers): void {
+    this.titleShown = false;
+    this.escapeAction = null;
+    this.overlay.classList.add("gate-mode");
+    document.body.classList.add("gate-mode");
+    this.panelHost.replaceChildren(renderGateScreen());
+    this.overlay.classList.remove("hidden");
+    this.onVisibilityChange?.(true);
+    this.fadeInOverlay();
+
+    const gate = this.panelHost.querySelector<HTMLElement>(".gate-screen");
+    const button = this.panelHost.querySelector<HTMLButtonElement>(".gate-begin");
+    let done = false;
+
+    const activate = () => {
+      if (done) return;
+      done = true;
+      window.removeEventListener("keydown", onKey);
+      this.overlay.removeEventListener("pointerdown", onPointer);
+      button?.removeEventListener("click", onClick);
+      handlers.onUnlock();
+      gate?.classList.add("leaving");
+      this.overlay.classList.add("leaving");
+      window.setTimeout(() => {
+        this.overlay.classList.remove("gate-mode", "leaving");
+        document.body.classList.remove("gate-mode");
+        handlers.onReveal();
+      }, 720);
+    };
+
+    const onPointer = () => activate();
+    const onClick = (event: MouseEvent) => {
+      event.preventDefault();
+      activate();
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (["Tab", "Shift", "Control", "Alt", "Meta"].includes(event.key)) return;
+      event.preventDefault();
+      activate();
+    };
+
+    window.addEventListener("keydown", onKey);
+    this.overlay.addEventListener("pointerdown", onPointer);
+    button?.addEventListener("click", onClick);
+    window.requestAnimationFrame(() => button?.focus());
+  }
+
+  private fadeInOverlay(): void {
+    this.overlay.style.opacity = "0";
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        this.overlay.style.opacity = "1";
+      });
+    });
   }
 
   hideOverlay(): void {
     this.titleShown = false;
     this.escapeAction = null;
+    this.overlay.style.opacity = "";
     this.overlay.classList.add("hidden");
     this.overlay.classList.remove("title-mode");
     document.body.classList.remove("title-mode");
@@ -257,6 +320,7 @@ export class UI {
     this.panelHost.replaceChildren(content);
     this.overlay.classList.remove("hidden");
     this.onVisibilityChange?.(true);
+    this.fadeInOverlay();
     window.requestAnimationFrame(() => this.focusFirst());
   }
 }

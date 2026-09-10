@@ -278,3 +278,7 @@ covered by `npm test`:
 Prototype scope is deliberately tiny: Shrine movement, normal pilgrims, walls, floors,
 void, hazards, exits, multiple pilgrims, collision, unlimited undo, restart and level
 progression. Everything else in the design document is intentionally not built yet.
+
+---
+
+Made by [@ashthepeasant](https://x.com/ashthepeasant).

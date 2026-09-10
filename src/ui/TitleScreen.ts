@@ -109,6 +109,16 @@ export function renderTitleScreen(options: TitleOptions): HTMLElement {
     "Arrow keys / WASD move the Shrine · Space waits · Z undoes · Esc pauses";
   bottom.append(hint);
 
+  const credit = reveal(element("p", "title-credit"), 3700);
+  credit.append(document.createTextNode("by "));
+  const link = document.createElement("a");
+  link.href = "https://x.com/ashthepeasant";
+  link.target = "_blank";
+  link.rel = "me noopener noreferrer";
+  link.textContent = "@ashthepeasant";
+  credit.append(link);
+  bottom.append(credit);
+
   screen.append(top, bottom);
   return screen;
 }

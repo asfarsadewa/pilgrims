@@ -159,6 +159,22 @@ async function main() {
     }
   })()`);
 
+  // The entry ritual must be present, and any gesture must reveal the title.
+  const gate = await evaluate(`(() => {
+    const node = document.querySelector('.gate-screen');
+    return {
+      present: !!node,
+      action: (node?.querySelector('.gate-begin')?.textContent ?? '').trim() || null,
+      hint: (node?.querySelector('.gate-hint')?.textContent ?? '').trim() || null,
+      focus: (document.activeElement?.textContent ?? '').trim() || null,
+    };
+  })()`);
+  await evaluate(
+    `document.querySelector('.overlay')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))`,
+  );
+  await delay(1500);
+  const gateGone = await evaluate(`!document.querySelector('.gate-screen')`);
+
   // Inspect the opening screen, then dismiss it via the primary action.
   const title = await evaluate(`(() => {
     const overlay = document.getElementById('overlay');
@@ -169,6 +185,7 @@ async function main() {
       word: document.querySelector('.title-word')?.textContent ?? null,
       glyphVisible: scene ? scene.visible : null,
       hasMark: !!document.querySelector('.title-mark'),
+      credit: document.querySelector('.title-credit a')?.getAttribute('href') ?? null,
     };
   })()`);
   // Measure how readable the lone traveller is on the title screen.
@@ -436,6 +453,8 @@ async function main() {
     JSON.stringify(
       {
         info,
+        gate,
+        gateGone,
         title,
         titleLight,
         music,

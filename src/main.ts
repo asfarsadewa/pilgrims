@@ -300,9 +300,15 @@ async function bootstrap(): Promise<void> {
   renderer.setCamera(save.data.camera);
   ui.setActiveCamera(save.data.camera);
 
-  // Prepare the resume level, then greet the player with the title monument.
+  // Prepare the resume level, then hold the player at the entry ritual. The
+  // gate's single gesture is what lets the browser start audio.
   startLevel(resumeIndex(), { announce: false });
-  showTitleScreen();
+  renderer.showTitle();
+  audio.playMusic(musicRequest("title"));
+  ui.showGate({
+    onUnlock: () => audio.unlock(),
+    onReveal: () => showTitleScreen(),
+  });
 
   // Expose a tiny debug hook for the console during development.
   (window as unknown as { pilgrims?: unknown }).pilgrims = {

@@ -167,6 +167,20 @@ def render(size) -> Image.Image:
         3.4 * u,
         FAINT,
     )
+
+    # Author handle, bottom-right.
+    handle = "@ashthepeasant"
+    handle_font = font(GEORGIA_ITALIC, int(15 * u))
+    handle_tracking = 1.6 * u
+    handle_width = sum(
+        draw.textlength(ch, font=handle_font) for ch in handle
+    ) + handle_tracking * (len(handle) - 1)
+    cursor = width - pad - handle_width
+    handle_y = int(height * 0.91)
+    for ch in handle:
+        draw.text((cursor, handle_y), ch, font=handle_font, fill=GOLD, anchor="ls")
+        cursor += draw.textlength(ch, font=handle_font) + handle_tracking
+
     return canvas.convert("RGB")
 
 
