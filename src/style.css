@@ -784,7 +784,7 @@ body.gate-mode #touch-controls {
 .overlay.gate-mode {
   --ap-x: 50%;
   --ap-y: 40%;
-  --ap-r: min(32vmin, 240px);
+  --ap-r: min(26vmin, 190px);
   align-items: stretch;
   justify-content: center;
   backdrop-filter: none;
@@ -1097,14 +1097,6 @@ body.gate-mode #touch-controls {
   50% {
     transform: scaleY(1);
   }
-}
-
-.gate-sound-label {
-  font-size: 0.54rem;
-  letter-spacing: 0.28em;
-  text-indent: 0.28em;
-  text-transform: uppercase;
-  color: var(--ink-dim);
 }
 
 @media (prefers-reduced-motion: reduce) {

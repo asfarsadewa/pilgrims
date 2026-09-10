@@ -20,7 +20,7 @@ export class GateScene {
   private built = false;
   private lastTime = 0;
 
-  private static readonly PILGRIM_HEIGHT = 1.05;
+  private static readonly PILGRIM_HEIGHT = 0.85;
   /** Profile facing screen-right, perpendicular to the fixed gate camera. */
   private static readonly FACING = 0.46;
 

@@ -110,7 +110,6 @@ export function renderTitleScreen(options: TitleOptions): HTMLElement {
   bottom.append(hint);
 
   const credit = reveal(element("p", "title-credit"), 3700);
-  credit.append(document.createTextNode("by "));
   const link = document.createElement("a");
   link.href = "https://x.com/ashthepeasant";
   link.target = "_blank";

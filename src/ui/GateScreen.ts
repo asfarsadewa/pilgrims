@@ -82,9 +82,7 @@ export function renderGateScreen(): HTMLElement {
   const sound = element("div", "gate-sound");
   const bars = element("span", "gate-bars");
   for (let i = 0; i < 3; i++) bars.append(element("span", "gate-bar"));
-  const soundLabel = element("span", "gate-sound-label");
-  soundLabel.textContent = "sound begins here";
-  sound.append(bars, soundLabel);
+  sound.append(bars);
 
   const top = element("div", "gate-top");
   top.append(emblem);

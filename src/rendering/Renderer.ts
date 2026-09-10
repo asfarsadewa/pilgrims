@@ -196,7 +196,7 @@ export class Renderer {
     const theme = getTheme("night");
     this.theme = theme;
     this.gateScene.setTheme(theme);
-    this.cameraController.focus(2.1, this.aspect(), 0.24);
+    this.cameraController.focus(2.1, this.aspect(), 0.215);
     this.sceneBuilder.applyTheme(
       theme,
       5,
